@@ -10,7 +10,7 @@ import numpy as np
 # ================================================================
 class Properties:
     @property
-    def nr_of_citizens(self) -> int: return self._nr_of_citizens
+    def nr_of_citizens(self) -> int: return len(self._citizens)
 
     @property
     def connectivity_matrix(self) -> np.ndarray: return self._connectivity_matrix
@@ -23,12 +23,6 @@ class Properties:
     # ================================================================
     # 2. Section: Setters
     # ================================================================
-    @nr_of_citizens.setter
-    def nr_of_citizens(self, value: int):
-        if value <= 0: raise ValueError("Number of citizens must be positive.")
-
-        self._nr_of_citizens = value
-
     @connectivity_matrix.setter
     def connectivity_matrix(self, value: np.ndarray): self._connectivity_matrix = value
 
