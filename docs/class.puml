@@ -94,7 +94,7 @@ package "Model Domain Layer" #FFF8E1 {
     }
 
 
-    class Node <<planned>> {
+    class Node <<implemented>> {
         + id: int
         + node_type: str
         + modules: dict[str, NodeModule]
