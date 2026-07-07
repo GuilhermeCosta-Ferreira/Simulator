@@ -140,7 +140,7 @@ package "Model Domain Layer" #FFF8E1 {
         SimulationBlueprint --> SimulationSpecs
 
 
-        class NodeBlueprint <<planned>> {
+        class NodeBlueprint <<implemented>> {
             + data: dict
             + type_names: list[str]
 
