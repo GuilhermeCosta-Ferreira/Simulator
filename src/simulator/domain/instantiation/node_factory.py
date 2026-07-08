@@ -91,6 +91,7 @@ def _build_variables(module_type: ModuleProperty) -> NodeModule:
     kwargs = {}
 
     for variable in module_type.variables:
-        kwargs[variable] = module_type.sample(variable)
+        variable_prop = module_type.variables[variable]
+        kwargs[variable] = variable_prop.sample()
 
     return module_class(**kwargs)

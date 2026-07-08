@@ -28,3 +28,6 @@ class VariableProperty:
             return NormalDistribution(**self.data["distribution"])
 
         raise ValueError(f"Unknown distribution type: {dist_type}")
+
+    def sample(self) -> float:
+        return self.distribution.sample()
