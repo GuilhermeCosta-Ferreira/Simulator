@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from ..node import Node
 from .node_blueprint import NodeBlueprint
-from .module_property import ModuleProperty
+from .module_properties import ModuleProperty
 from ..connectivity_matrix import ConnectivityMatrix
 from ..modules import NodeModule, HealthModule, MoneyModule
 
