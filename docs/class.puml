@@ -36,7 +36,7 @@ endlegend
 'Service Layer'
 '=============================================================================='
 package "Service Layer" #E8F5E9 {
-    class Simulation <<planned>> {
+    class Simulation <<implemented>> {
         + engine: SimulationEngine
         - _current_step: int
         - _history: list[SimulationState]
@@ -53,30 +53,30 @@ package "Service Layer" #E8F5E9 {
 package "Model Domain Layer" #FFF8E1 {
 
     package "Modules"{
-        interface NodeModule <<planned>> {
-            + name: str
+        interface NodeModule <<implemented>> {
+            + name: ClassVar[str]
         }
 
-        class HealthModule <<planned>> {
+        class HealthModule <<partial>> {
             + health: float
             + age: float
         }
         HealthModule ..|> NodeModule
 
 
-        class MoneyModule <<planned>> {
+        class MoneyModule <<partial>> {
             + balance: float
             + income_rate: float
         }
         MoneyModule ..|> NodeModule
 
-        class ResourcesModule <<planned>> {
+        class ResourcesModule <<partial>> {
             + resources: list[Resource]
         }
         ResourcesModule ..|> NodeModule
         ResourcesModule o-- Resource
 
-        class Resource <<planned>> {
+        class Resource <<implemented>> {
             + name: str
             + sell_value: float
             + target_value: float
@@ -86,7 +86,7 @@ package "Model Domain Layer" #FFF8E1 {
         }
         Resource o-- ResourceProperty
 
-        interface ResourceProperty <<planned>> {
+        interface ResourceProperty <<implemented>> {
             name: str
 
             + apply(): None
@@ -94,7 +94,7 @@ package "Model Domain Layer" #FFF8E1 {
     }
 
 
-    class Node <<planned>> {
+    class Node <<implemented>> {
         + id: int
         + node_type: str
         + modules: dict[str, NodeModule]
@@ -102,10 +102,10 @@ package "Model Domain Layer" #FFF8E1 {
     Node o-- NodeModule
 
 
-    class SimulationEngine <<planned>> {
+    class SimulationEngine <<partial>> {
         + nodes: list[Node]
         + connectivity_matrix: ConnectivityMatrix
-        - simulation_specs: SimulationSpecs
+        + simulation_specs: SimulationSpecs
 
         + step(): SimulationState
     }
@@ -114,24 +114,24 @@ package "Model Domain Layer" #FFF8E1 {
     SimulationEngine ..> SimulationState
 
 
-    class ConnectivityMatrix <<planned>> {
+    class ConnectivityMatrix <<partial>> {
         + data: NDArray
 
         + get_most_connected(): int
     }
 
 
-    class SimulationState <<planned>> {
+    class SimulationState <<implemented>> {
         + nodes: list[Node]
         + connectivity_matrix: ConnectivityMatrix
-        + state: dict
+        + time_idx: int
     }
     SimulationState o-- Node
     SimulationState --> ConnectivityMatrix
 
 
     package "Instantiation"{
-        class SimulationBlueprint <<planned>> {
+        class SimulationBlueprint <<implemented>> {
             + data: dict
             + node_blueprint: NodeBlueprint
             + simulation_specs: SimulationSpecs
@@ -140,16 +140,21 @@ package "Model Domain Layer" #FFF8E1 {
         SimulationBlueprint --> SimulationSpecs
 
 
-        class NodeBlueprint <<planned>> {
+        class NodeBlueprint <<implemented>> {
             + data: dict
             + type_names: list[str]
+
+            + node_properties: list[NodeProperty]
+            + nr_nodes: int
 
             + get_node_type_properties(name: str): NodeProperty
         }
         NodeBlueprint ..> NodeProperty
 
 
-        class SimulationSpecs <<planned>> {
+        class SimulationSpecs <<implemented>> {
+            + data: dict
+
             + step_size: StepType
             + max_duration: int
             + re_connection: bool
@@ -158,21 +163,80 @@ package "Model Domain Layer" #FFF8E1 {
         SimulationSpecs --> StepType
 
 
-        class StepType <<planned>> {
+        class StepType <<implemented>> {
             + factor: float
             + unit: str
+
+            + from_str(str): StepType
         }
 
 
-        class NodeProperty <<planned>> {
+        class NodeProperty <<implemented>> {
             + name: str
-            + modules: list[str]
+            + modules: list[ModuleProperty]
             + initial_numbers: int
-            + connectivity: int
+            + connectivity: ConnectivityRule
+        }
+        NodeProperty --> ConnectivityRule
+
+
+        package "Module Properties"{
+            class ModuleProperty <<implemented>> {
+                + name: str
+                + data: dict[str, Any]
+                + variables: dict[str, VariableProperty]
+            }
+            VariableProperty o-- ModuleProperty
+
+
+            class VariableProperty <<implemented>> {
+                + range: PropertyRange
+                + distribution: PropertyDistribution
+
+                + sample(): float
+            }
+            VariableProperty --> PropertyRange
+            VariableProperty --> PropertyDistribution
+
+
+            class PropertyRange <<implemented>> {
+                + min: float
+                + max: float
+            }
+
+
+            abstract class PropertyDistribution <<implemented>> {
+                + type: ClassVar[str]
+                + data: dict[str, Any]
+
+                + sample(): float
+            }
+
+
+            class NormalDistribution <<implemented>> {
+                + min: float
+                + max: float
+            }
+            NormalDistribution ..|> PropertyDistribution
         }
 
 
-        class SimulationFactory <<planned>> {
+        abstract class ConnectivityRule <<implemented>> {
+            + name: ClassVar[str]
+            + data: dict
+
+            + build(id: int, node_row: NDArray): NDArray
+        }
+
+
+        class NormalConnectivity <<partial>> {
+            + mean: float
+            + std: float
+        }
+        NormalConnectivity ..|> ConnectivityRule
+
+
+        class SimulationFactory <<implemented>> {
             - _node_factory: NodeFactory
 
             + build_simulation(blueprint: SimulationBlueprint): Simulation
@@ -180,8 +244,9 @@ package "Model Domain Layer" #FFF8E1 {
         SimulationFactory --> NodeFactory
         SimulationFactory ..> SimulationBlueprint
         SimulationFactory ..> SimulationEngine
+        SimulationFactory ..> Simulation
 
-        class NodeFactory <<planned>> {
+        class NodeFactory <<implemented>> {
             + build_nodes(node_blueprint: NodeBlueprint): list[Node]
             + build_connectivity(node_blueprint: NodeBlueprint): ConnectivityMatrix
         }
@@ -261,6 +326,7 @@ package "Adapter Layer" #E3F2FD {
 SimulationEngine --> SimulationSpecs
 Simulation --> SimulationEngine
 Simulation o-- SimulationState
+NodeProperty --> ModuleProperty
 
 
 @enduml
