@@ -20,9 +20,17 @@ from .config_loader import ConfigLoader
 class SimulationIO:
     source: Source
 
-    _config_loader: ConfigLoader
-    _downloader: Downloader
-    _repository: Repository
+    @property
+    def _config_loader(self):
+        return ConfigLoader(self.source)
+
+    @property
+    def _downloader(self):
+        return Downloader(self.source)
+
+    @property
+    def _repository(self):
+        return Repository(self.source)
 
     def init_simulation(self) -> Path:
         sim_folder = self._repository.init_simulation()
