@@ -283,7 +283,7 @@ package "Adapter Layer" #E3F2FD {
     }
 
 
-    class ConfigLoader <<planned>> {
+    class ConfigLoader <<implemented>> {
         + source: Source
 
         + load_config(): SimulationBlueprint
