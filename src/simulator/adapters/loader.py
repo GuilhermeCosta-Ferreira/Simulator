@@ -9,15 +9,9 @@ from dataclasses import dataclass
 
 from .source import Source
 from ..service.simulation import Simulation
-from ..domain.node import Node
-from ..domain.simulation_engine import SimulationEngine
-from ..domain.simulation_state import SimulationState
-from ..domain.connectivity_matrix import ConnectivityMatrix
-from ..domain.instantiation.simulation_specs import SimulationSpecs
-from ..domain.modules.resource import Resource
-from ..domain.modules.health_module import HealthModule
-from ..domain.modules.money_module import MoneyModule
-from ..domain.modules.resources_module import ResourcesModule
+from ..domain import Node, ConnectivityMatrix, SimulationState, SimulationEngine
+from ..domain.instantiation import SimulationSpecs
+from ..domain.modules import Resource, HealthModule, MoneyModule, ResourcesModule
 
 # ================================================================
 # 1. Section: Registry
@@ -63,7 +57,7 @@ class Loader:
 
         return simulation
 
-    def _decode(self, node: h5py.Group | h5py.Dataset) -> Any:
+    def _decode(self, node: Any) -> Any:
         if isinstance(node, h5py.Dataset):
             return self._decode_dataset(node)
 
@@ -72,8 +66,7 @@ class Loader:
 
         container = node.attrs.get("__container__")
         if container == "list":
-            length = int(node.attrs["__length__"])
-            return [self._decode(node[str(idx)]) for idx in range(length)]
+            return [self._decode(node[str(idx)]) for idx in range(len(node))]
 
         if container == "dict":
             return {key: self._decode(node[key]) for key in node.keys()}
