@@ -291,7 +291,7 @@ package "Adapter Layer" #E3F2FD {
     ConfigLoader ..> SimulationBlueprint
 
 
-    class Downloader <<planned>> {
+    class Downloader <<implemented>> {
         + source: Source
 
         + download_run(run_nr: int, out_file_type: str): Path
@@ -299,7 +299,7 @@ package "Adapter Layer" #E3F2FD {
     Downloader --> Source
 
 
-    class SimulationIO <<partial>> {
+    class SimulationIO <<implemented>> {
         + source: Source
 
         - _config_loader: ConfigLoader
