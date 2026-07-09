@@ -57,9 +57,9 @@ class FakeRepository:
         self.init_simulation_calls += 1
         return self.sim_folder
 
-    def init_run(self) -> Path:
+    def init_run(self) -> tuple[Path, int]:
         self.init_run_calls += 1
-        return self.run_folder
+        return self.run_folder, self.init_run_calls
 
 
 # ================================================================
@@ -95,7 +95,7 @@ def test_init_run_delegates_to_repository(
     monkeypatch.setattr(simulation_io_module, "Repository", lambda src: repository)
     io = SimulationIO(source)
 
-    result = io.init_run()
+    result, _ = io.init_run()
 
     assert repository.init_run_calls == 1
     assert result == Path("run")
