@@ -10,8 +10,16 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
+from numpy.typing import NDArray
+
 from simulator.domain.node import Node
+from simulator.domain.connectivity_matrix import ConnectivityMatrix
+from simulator.domain.simulation_state import SimulationState
+from simulator.domain.simulation_engine import SimulationEngine
+from simulator.domain.instantiation import SimulationSpecs
 from simulator.domain.modules import HealthModule, MoneyModule
+from simulator.service.simulation import Simulation
 
 
 # ──────────────────────────────────────────────────────
@@ -106,3 +114,72 @@ def build_node(
     if modules is None:
         modules = [HealthModule(health=50.0, age=30.0)]
     return Node(id=node_id, node_type=node_type, modules=modules)
+
+
+def build_connectivity_matrix(data: NDArray | None = None) -> ConnectivityMatrix:
+    if data is None:
+        data = np.array([[0.0, 1.0], [1.0, 0.0]])
+    return ConnectivityMatrix(data=data)
+
+
+def build_simulation_specs(**overrides: Any) -> SimulationSpecs:
+    """A SimulationSpecs wrapping the canonical simulation config dict."""
+    return SimulationSpecs(build_simulation_data(**overrides))
+
+
+def build_engine(
+    nodes: list[Node] | None = None,
+    connectivity_matrix: ConnectivityMatrix | None = None,
+    simulation_specs: SimulationSpecs | None = None,
+) -> SimulationEngine:
+    """A SimulationEngine with a two-node population and 2x2 connectivity.
+
+    The default population mixes a HealthModule node and a MoneyModule node so
+    round-trip tests exercise more than one concrete module type.
+    """
+    if nodes is None:
+        nodes = [
+            Node(
+                id=0, node_type="citizen", modules=[HealthModule(health=80.0, age=25.0)]
+            ),
+            Node(
+                id=1,
+                node_type="company",
+                modules=[MoneyModule(balance=100.0, income=10.0)],
+            ),
+        ]
+    if connectivity_matrix is None:
+        connectivity_matrix = build_connectivity_matrix()
+    if simulation_specs is None:
+        simulation_specs = build_simulation_specs(max_duration=3)
+    return SimulationEngine(
+        nodes=nodes,
+        connectivity_matrix=connectivity_matrix,
+        simulation_specs=simulation_specs,
+    )
+
+
+def build_simulation(
+    engine: SimulationEngine | None = None,
+    history: list[SimulationState] | None = None,
+    current_step: int = 0,
+) -> Simulation:
+    """A Simulation service object with a populated engine, history and step.
+
+    The engine's step() is unimplemented, so history is injected directly
+    (mirroring how the loader reconstructs a run) rather than produced by a run.
+    """
+    if engine is None:
+        engine = build_engine()
+    if history is None:
+        state = SimulationState(
+            nodes=engine.nodes,
+            connectivity_matrix=engine.connectivity_matrix,
+            time_idx=0,
+        )
+        history = [state]
+
+    simulation = Simulation(engine=engine)
+    simulation._current_step = current_step
+    simulation._history = history
+    return simulation
