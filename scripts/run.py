@@ -27,3 +27,4 @@ if __name__ == '__main__':
 
     repository = Repository(source)
     run_id = repository.init_simulation()
+    run_folder = repository.init_run()
