@@ -14,7 +14,7 @@ from simulator.domain.connectivity_matrix import ConnectivityMatrix
 from simulator.domain.node import Node
 from simulator.domain.simulation_engine import SimulationEngine
 from simulator.domain.simulation_state import SimulationState
-from simulator.service.simulation import Simulation
+from simulator.service.simulation_run import SimulationRun
 
 
 def assert_connectivity_equal(
@@ -40,7 +40,7 @@ def assert_engine_equal(actual: SimulationEngine, expected: SimulationEngine) ->
     assert actual.simulation_specs.data == expected.simulation_specs.data
 
 
-def assert_simulation_equal(actual: Simulation, expected: Simulation) -> None:
+def assert_simulation_equal(actual: SimulationRun, expected: SimulationRun) -> None:
     assert actual._current_step == expected._current_step
     assert len(actual._history) == len(expected._history)
     for actual_state, expected_state in zip(actual._history, expected._history):

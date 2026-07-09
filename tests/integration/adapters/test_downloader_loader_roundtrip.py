@@ -16,7 +16,7 @@ from simulator.adapters.downloader import Downloader
 from simulator.adapters.loader import Loader
 from simulator.adapters.source import Source
 from simulator.domain.instantiation import SimulationSpecs
-from simulator.service.simulation import Simulation
+from simulator.service.simulation_run import SimulationRun
 from tests.helpers import builders
 from tests.helpers.assertions import assert_simulation_equal
 

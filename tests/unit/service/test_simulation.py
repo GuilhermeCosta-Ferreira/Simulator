@@ -11,7 +11,7 @@ history. We use a RecordingEngine fake so the test is fast and independent of th
 # ================================================================
 import pytest
 
-from simulator.service.simulation import Simulation
+from simulator.service.simulation_run import SimulationRun
 from tests.helpers.fakes import RecordingEngine
 
 
@@ -21,7 +21,7 @@ from tests.helpers.fakes import RecordingEngine
 @pytest.mark.unit
 def test_run_simulation_steps_engine_max_duration_times() -> None:
     engine = RecordingEngine(max_duration=5)
-    simulation = Simulation(engine=engine)
+    simulation = SimulationRun(engine=engine)
 
     simulation.run_simulation()
 
@@ -31,7 +31,7 @@ def test_run_simulation_steps_engine_max_duration_times() -> None:
 @pytest.mark.unit
 def test_run_simulation_collects_one_state_per_step() -> None:
     engine = RecordingEngine(max_duration=3)
-    simulation = Simulation(engine=engine)
+    simulation = SimulationRun(engine=engine)
 
     simulation.run_simulation()
 
@@ -42,7 +42,7 @@ def test_run_simulation_collects_one_state_per_step() -> None:
 @pytest.mark.unit
 def test_run_simulation_advances_current_step_to_max_duration() -> None:
     engine = RecordingEngine(max_duration=4)
-    simulation = Simulation(engine=engine)
+    simulation = SimulationRun(engine=engine)
 
     simulation.run_simulation()
 
@@ -52,7 +52,7 @@ def test_run_simulation_advances_current_step_to_max_duration() -> None:
 @pytest.mark.unit
 def test_run_simulation_with_zero_duration_does_nothing() -> None:
     engine = RecordingEngine(max_duration=0)
-    simulation = Simulation(engine=engine)
+    simulation = SimulationRun(engine=engine)
 
     simulation.run_simulation()
 
@@ -62,7 +62,7 @@ def test_run_simulation_with_zero_duration_does_nothing() -> None:
 
 @pytest.mark.unit
 def test_simulation_starts_with_empty_history_before_running() -> None:
-    simulation = Simulation(engine=RecordingEngine(max_duration=2))
+    simulation = SimulationRun(engine=RecordingEngine(max_duration=2))
 
     assert simulation._history == []
     assert simulation._current_step == 0
