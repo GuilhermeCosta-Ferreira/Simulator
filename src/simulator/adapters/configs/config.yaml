@@ -1,0 +1,45 @@
+simulation_name: ""
+simulation_description: ""
+nodes:
+  citizen:
+    initial_numbers: 100_000
+    connectivity:
+      type: normal
+      mean: 0.6
+      std: 0.2
+    modules:
+      health:
+        age:
+          range: [20, 60]
+          distribution:
+            type: normal
+            mean: 50
+            std: 2
+        health:
+          range: [50, 100]
+          distribution:
+            type: normal
+            mean: 80
+            std: 10
+  governament:
+    initial_numbers: 1
+    connectivity:
+      type: constant
+      value: 1
+    modules:
+      money:
+        balance:
+          range: [100_000_000, 100_000_000]
+          distribution:
+            type: constant
+            value: 100_000_000
+        income:
+          range: [0, 0]
+          distribution:
+            type: constant
+            value: 0
+simulation:
+  step_size: 1 month
+  max_duration: 48
+  re_connection: False
+  seed: 2026
