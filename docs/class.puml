@@ -299,7 +299,7 @@ package "Adapter Layer" #E3F2FD {
     Downloader --> Source
 
 
-    class SimulationIO <<planned>> {
+    class SimulationIO <<partial>> {
         + source: Source
 
         - _config_loader: ConfigLoader
