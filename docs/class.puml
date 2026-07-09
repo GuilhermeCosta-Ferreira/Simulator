@@ -263,7 +263,7 @@ package "Model Domain Layer" #FFF8E1 {
 'Adapter Layer'
 '=============================================================================='
 package "Adapter Layer" #E3F2FD {
-    class Repository <<planned>> {
+    class Repository <<implemented>> {
         + source: Source
 
         + init_simulation(): Path
@@ -272,7 +272,7 @@ package "Adapter Layer" #E3F2FD {
     Repository --> Source
 
 
-    class Source <<planned>> {
+    class Source <<implemented>> {
         + simulation_name: str
         + simulation_description: str
         + folder: Path
@@ -283,7 +283,7 @@ package "Adapter Layer" #E3F2FD {
     }
 
 
-    class ConfigLoader <<planned>> {
+    class ConfigLoader <<implemented>> {
         + source: Source
 
         + load_config(): SimulationBlueprint
@@ -291,7 +291,7 @@ package "Adapter Layer" #E3F2FD {
     ConfigLoader ..> SimulationBlueprint
 
 
-    class Downloader <<planned>> {
+    class Downloader <<implemented>> {
         + source: Source
 
         + download_run(run_nr: int, out_file_type: str): Path
@@ -299,22 +299,36 @@ package "Adapter Layer" #E3F2FD {
     Downloader --> Source
 
 
-    class SimulationIO <<planned>> {
+    class Loader <<implemented>> {
+        + source: Source
+
+        + load_run(run_nr: int, out_file_type: str): Simulation
+    }
+    Loader --> Source
+    Loader ..> Simulation
+
+
+    class SimulationIO <<partial>> {
         + source: Source
 
         - _config_loader: ConfigLoader
         - _downloader: Downloader
         - _repository: Repository
+        - _loader: Loader
 
         + init_simulation(): Path
         + init_run(): Path
-        + load_config(): Path
+        + load_config(): SimulationBlueprint
         + download_run(run_nr: int, out_file_type: str): Path
+        + load_run(run_nr: int, out_file_type: str): Simulation
     }
     SimulationIO --> Source
     SimulationIO --> ConfigLoader
     SimulationIO --> Downloader
     SimulationIO --> Repository
+    SimulationIO --> Loader
+    SimulationIO ..> Simulation
+    SimulationIO ..> SimulationBlueprint
 
 }
 
