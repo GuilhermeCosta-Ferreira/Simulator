@@ -40,3 +40,12 @@ class Repository:
             yaml.dump(config, f)
 
         return self.source.folder
+
+    def init_run(self) -> Path:
+        nr_of_runs = len(list(self.source.runs_folder.iterdir()))
+        run_id = str(nr_of_runs + 1)
+
+        run_folder = self.source.get_run_folder(run_id)
+        run_folder.mkdir(parents=True, exist_ok=True)
+
+        return run_folder
