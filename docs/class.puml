@@ -38,8 +38,8 @@ endlegend
 package "Service Layer" #E8F5E9 {
     class SimulationRun <<implemented>> {
         + engine: SimulationEngine
-        - _current_step: int
-        - _history: list[SimulationState]
+        + current_step: int
+        + history: list[SimulationState]
 
         + run_simulation():
     }
