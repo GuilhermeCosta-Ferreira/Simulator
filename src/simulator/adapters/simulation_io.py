@@ -5,7 +5,7 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from simulator.domain.instantiation.simulation_blueprint import SimulationBlueprint
-from simulator.service.simulation import Simulation
+from simulator.service.simulation_run import SimulationRun
 
 from .source import Source
 from .repository import Repository
@@ -39,7 +39,7 @@ class SimulationIO:
         return blueprint
 
     def download_run(
-        self, simulation: Simulation, run_nr: int, out_file_type: str = "hdf5"
+        self, simulation: SimulationRun, run_nr: int, out_file_type: str = "hdf5"
     ) -> Path:
         out_path = self._downloader.download_run(simulation, run_nr, out_file_type)
         return out_path
