@@ -156,3 +156,36 @@ def test_updated_simulation_name_appends_next_index(tmp_path: Path) -> None:
     result = _updated_simulation_name(source)
 
     assert result.simulation_name == "sim_2"
+
+
+@pytest.mark.unit
+def test_updated_simulation_name_ignores_prefix_only_matches(tmp_path: Path) -> None:
+    # "simulation" shares a prefix with "sim" but is a different simulation.
+    (tmp_path / "simulation").mkdir()
+    (tmp_path / "sim_backup").mkdir()
+    source = Source("sim", "desc", base_folder=tmp_path)
+
+    result = _updated_simulation_name(source)
+
+    assert result.simulation_name == "sim"
+
+
+@pytest.mark.unit
+def test_updated_simulation_name_ignores_files(tmp_path: Path) -> None:
+    # A stray file named like the simulation must not count as a copy.
+    (tmp_path / "sim").touch()
+    source = Source("sim", "desc", base_folder=tmp_path)
+
+    result = _updated_simulation_name(source)
+
+    assert result.simulation_name == "sim"
+
+
+@pytest.mark.unit
+def test_updated_simulation_name_handles_missing_base_folder(tmp_path: Path) -> None:
+    missing = tmp_path / "does_not_exist"
+    source = Source("sim", "desc", base_folder=missing)
+
+    result = _updated_simulation_name(source)
+
+    assert result.simulation_name == "sim"

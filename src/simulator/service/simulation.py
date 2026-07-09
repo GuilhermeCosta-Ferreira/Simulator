@@ -1,6 +1,8 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+import re
+
 from pathlib import Path
 from dataclasses import dataclass
 
@@ -45,16 +47,27 @@ class Simulation:
         run_folder = SimulationIO(self._source).init_simulation()
         return run_folder
 
+
+# ──────────────────────────────────────────────────────
+# 1.1 Subsection: Helper Functions
+# ──────────────────────────────────────────────────────
 def _updated_simulation_name(source: Source) -> Source:
     simulation_name = source.simulation_name
-    nr_copies = len([p for p in source.base_folder.iterdir() if p.name.startswith(simulation_name)])
+
+    if not source.base_folder.exists():
+        return source
+
+    pattern = re.compile(rf"{re.escape(simulation_name)}(_\d+)?$")
+    nr_copies = len(
+        [
+            p
+            for p in source.base_folder.iterdir()
+            if p.is_dir() and pattern.fullmatch(p.name)
+        ]
+    )
 
     if nr_copies > 0:
-        simulation_name = (
-            source.simulation_name
-            + "_"
-            + str(nr_copies + 1)
-        )
+        simulation_name = source.simulation_name + "_" + str(nr_copies + 1)
 
     source.simulation_name = simulation_name
 
