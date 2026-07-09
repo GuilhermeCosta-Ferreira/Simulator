@@ -1,6 +1,8 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+import os
+
 from ruamel.yaml import YAML
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,14 +20,6 @@ class Repository:
     _config_path: Path = Path("src/simulator/adapters/configs/config.yaml")
 
     def init_simulation(self) -> Path:
-        if self.source.folder.exists():
-            simulation_name = (
-                self.source.simulation_name
-                + "_"
-                + str(len(list(self.source.folder.iterdir())))
-            )
-            self.source.simulation_name = simulation_name
-
         self.source.base_folder.mkdir(parents=True, exist_ok=True)
         self.source.folder.mkdir(parents=True, exist_ok=True)
         self.source.runs_folder.mkdir(parents=True, exist_ok=True)
