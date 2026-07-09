@@ -53,7 +53,7 @@ def test_init_run_creates_first_run_folder(source: Source) -> None:
     repository = Repository(source)
     repository.init_simulation()
 
-    run_folder = repository.init_run()
+    run_folder, _ = repository.init_run()
 
     assert run_folder == source.get_run_folder("1")
     assert run_folder.is_dir()
@@ -64,8 +64,8 @@ def test_init_run_increments_run_number(source: Source) -> None:
     repository = Repository(source)
     repository.init_simulation()
 
-    first = repository.init_run()
-    second = repository.init_run()
+    first, _ = repository.init_run()
+    second, _ = repository.init_run()
 
     assert first == source.get_run_folder("1")
     assert second == source.get_run_folder("2")
