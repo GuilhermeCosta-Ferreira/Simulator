@@ -66,3 +66,28 @@ def test_simulation_starts_with_empty_history_before_running() -> None:
 
     assert simulation.history == []
     assert simulation.current_step == 0
+
+
+@pytest.mark.unit
+def test_run_simulation_passes_current_step_to_engine() -> None:
+    engine = RecordingEngine(max_duration=3)
+    simulation = SimulationRun(engine=engine)
+
+    simulation.run_simulation()
+
+    # Each step() receives the current time index before it is advanced.
+    assert engine.step_args == [0, 1, 2]
+
+
+@pytest.mark.unit
+def test_run_simulation_advances_by_step_factor() -> None:
+    # A fractional step factor means more steps are taken to reach max_duration
+    # and time advances in factor-sized increments.
+    engine = RecordingEngine(max_duration=2, step_factor=0.5)
+    simulation = SimulationRun(engine=engine)
+
+    simulation.run_simulation()
+
+    assert engine.step_calls == 4
+    assert engine.step_args == [0.0, 0.5, 1.0, 1.5]
+    assert simulation.current_step == 2.0
