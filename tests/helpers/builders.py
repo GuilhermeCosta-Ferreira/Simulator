@@ -72,6 +72,21 @@ def build_money_node_type_data(initial_numbers: int = 2) -> dict[str, Any]:
     }
 
 
+def build_homogeneous_percentage_nodes_data(
+    n: int, percentage: float
+) -> dict[str, Any]:
+    """A single-type population of ``n`` nodes all sharing one percentage rule.
+
+    Useful for statistical tests on PercentageConnectivity: every node follows
+    the same rule, so the whole matrix should reflect that one distribution.
+    """
+    return {
+        "citizen": build_health_node_type_data(
+            initial_numbers=n, percentage=percentage
+        ),
+    }
+
+
 def build_nodes_data() -> dict[str, Any]:
     """A two-node-type population: 3 citizens + 2 companies (5 nodes total)."""
     return {
