@@ -136,6 +136,7 @@ def test_step_leaves_unaffected_nodes_alive() -> None:
 def test_step_advances_module_state() -> None:
     engine = build_engine()
     health = engine.nodes[0].modules[0]
+    assert isinstance(health, HealthModule)
     age_before = health.age
 
     engine.step(0.0, engine.build_state(), _RNG)

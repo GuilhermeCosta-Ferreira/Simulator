@@ -9,9 +9,18 @@ applied to the world.
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+from typing import cast
+
+import numpy as np
 import pytest
 
 from simulator.domain.modules.node_module import NodeModule
+from simulator.domain.simulation_state import SimulationState
+
+# apply() must ignore its inputs entirely, so null stand-ins are passed on
+# purpose: any access would raise and fail the test.
+_NULL_STATE = cast(SimulationState, None)
+_NULL_RNG = cast(np.random.Generator, None)
 
 
 # ================================================================
@@ -46,7 +55,7 @@ def test_subclass_without_apply_cannot_be_instantiated() -> None:
 def test_subclass_with_apply_can_be_instantiated() -> None:
     module = Concrete()
 
-    assert module.apply(None, None) == []
+    assert module.apply(_NULL_STATE, _NULL_RNG) == []
 
 
 @pytest.mark.unit

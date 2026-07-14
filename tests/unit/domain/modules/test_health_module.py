@@ -10,11 +10,15 @@ is below any positive probability (always dies).
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+from typing import cast
+
+import numpy as np
 import pytest
 
 from simulator.domain.effects import DeathEffect
 from simulator.domain.modules import HealthModule
 from simulator.domain.modules.health_module import decay_curve
+from simulator.domain.simulation_state import SimulationState
 from tests.helpers.fakes import FakeStepType
 
 
@@ -28,21 +32,31 @@ class _FakeState:
         self.time_step = FakeStepType(factor=factor)
 
 
-class _NeverDieRng:
-    def random(self) -> float:
-        return 1.0
+class _FixedRng:
+    """Stub generator returning a fixed draw, for deterministic death tests."""
 
-
-class _AlwaysDieRng:
-    def random(self) -> float:
-        return 0.0
-
-
-class _LuckiestRealDrawRng:
-    """The best draw a real generator can produce: random() is always < 1."""
+    def __init__(self, draw: float) -> None:
+        self._draw = draw
 
     def random(self) -> float:
-        return 0.999_999_999
+        return self._draw
+
+
+def _state(factor: float = 1.0) -> SimulationState:
+    return cast(SimulationState, _FakeState(factor))
+
+
+def _never_die_rng() -> np.random.Generator:
+    return cast(np.random.Generator, _FixedRng(1.0))
+
+
+def _always_die_rng() -> np.random.Generator:
+    return cast(np.random.Generator, _FixedRng(0.0))
+
+
+def _luckiest_real_draw_rng() -> np.random.Generator:
+    # The best draw a real generator can produce: random() is always < 1.
+    return cast(np.random.Generator, _FixedRng(0.999_999_999))
 
 
 def _module(age: float = 30.0) -> HealthModule:
@@ -74,7 +88,7 @@ def test_health_module_stores_fields() -> None:
 def test_apply_advances_age_by_step_factor() -> None:
     module = _module(age=30.0)
 
-    module.apply(_FakeState(factor=0.5), _NeverDieRng())
+    module.apply(_state(factor=0.5), _never_die_rng())
 
     assert module.age == 30.5
 
@@ -83,7 +97,7 @@ def test_apply_advances_age_by_step_factor() -> None:
 def test_apply_recomputes_health_from_decay_curve() -> None:
     module = _module(age=30.0)
 
-    module.apply(_FakeState(factor=1.0), _NeverDieRng())
+    module.apply(_state(factor=1.0), _never_die_rng())
 
     assert module.health == pytest.approx(decay_curve(31.0, 100_000, 100.0))
 
@@ -92,7 +106,7 @@ def test_apply_recomputes_health_from_decay_curve() -> None:
 def test_apply_returns_no_effects_when_the_node_survives() -> None:
     module = _module(age=30.0)
 
-    effects = module.apply(_FakeState(), _NeverDieRng())
+    effects = module.apply(_state(), _never_die_rng())
 
     assert effects == []
 
@@ -102,7 +116,7 @@ def test_apply_returns_death_effect_carrying_the_node_id() -> None:
     module = _module(age=30.0)
     module.node_id = 7
 
-    effects = module.apply(_FakeState(), _AlwaysDieRng())
+    effects = module.apply(_state(), _always_die_rng())
 
     assert effects == [DeathEffect(node_id=7)]
 
@@ -113,7 +127,7 @@ def test_node_past_max_age_always_emits_death_effect() -> None:
     # most favourable draw (just below 1) cannot save the node.
     module = _module(age=200.0)
 
-    effects = module.apply(_FakeState(), _LuckiestRealDrawRng())
+    effects = module.apply(_state(), _luckiest_real_draw_rng())
 
     assert effects == [DeathEffect(node_id=module.node_id)]
 

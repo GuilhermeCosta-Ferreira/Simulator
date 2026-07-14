@@ -3,10 +3,19 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+from typing import cast
+
+import numpy as np
 import pytest
 
 from simulator.domain.modules import ResourcesModule
 from simulator.domain.modules.resource import Resource
+from simulator.domain.simulation_state import SimulationState
+
+# apply() must ignore its inputs entirely, so null stand-ins are passed on
+# purpose: any access would raise and fail the test.
+_NULL_STATE = cast(SimulationState, None)
+_NULL_RNG = cast(np.random.Generator, None)
 
 
 # ================================================================
@@ -53,4 +62,4 @@ def test_apply_returns_no_effects() -> None:
     # passive module must return an empty list, never None.
     module = ResourcesModule(resources=[_resource()])
 
-    assert module.apply(None, None) == []
+    assert module.apply(_NULL_STATE, _NULL_RNG) == []

@@ -11,7 +11,7 @@ emit can name their owning node.
 import pytest
 
 from simulator.domain.node import Node
-from simulator.domain.modules import HealthModule, MoneyModule
+from simulator.domain.modules import HealthModule, MoneyModule, NodeModule
 
 
 # ================================================================
@@ -19,7 +19,9 @@ from simulator.domain.modules import HealthModule, MoneyModule
 # ================================================================
 @pytest.mark.unit
 def test_node_stores_its_fields() -> None:
-    modules = [HealthModule(health=80.0, age=25.0, decay_factor=100_000, max_age=100.0)]
+    modules: list[NodeModule] = [
+        HealthModule(health=80.0, age=25.0, decay_factor=100_000, max_age=100.0)
+    ]
 
     node = Node(id=7, node_type="citizen", modules=modules, status=True)
 
@@ -47,7 +49,9 @@ def test_node_accepts_empty_module_list() -> None:
 
 @pytest.mark.unit
 def test_nodes_with_equal_fields_are_equal() -> None:
-    modules = [HealthModule(health=50.0, age=30.0, decay_factor=100_000, max_age=100.0)]
+    modules: list[NodeModule] = [
+        HealthModule(health=50.0, age=30.0, decay_factor=100_000, max_age=100.0)
+    ]
 
     a = Node(id=1, node_type="citizen", modules=modules, status=True)
     b = Node(id=1, node_type="citizen", modules=modules)
@@ -75,7 +79,9 @@ def test_node_stamps_its_id_on_every_module() -> None:
 
 @pytest.mark.unit
 def test_nodes_with_different_ids_are_not_equal() -> None:
-    modules = [HealthModule(health=50.0, age=30.0, decay_factor=100_000, max_age=100.0)]
+    modules: list[NodeModule] = [
+        HealthModule(health=50.0, age=30.0, decay_factor=100_000, max_age=100.0)
+    ]
 
     a = Node(id=1, node_type="citizen", modules=modules, status=True)
     b = Node(id=2, node_type="citizen", modules=modules)
