@@ -53,39 +53,51 @@ class SimulationEngine:
         previous_state: SimulationState,
         rng: np.random.Generator,
     ) -> SimulationState:
-        nodes = []
+        effects = []
         for node in self.nodes:
-            node = self.step_node(node, previous_state, rng)
-            nodes.append(node)
+            node_effects = self.step_node(node, previous_state, rng)
+            effects.extend(node_effects)
 
         simulation_state = SimulationState(
-            nodes=nodes,
+            nodes=self.nodes,
             connectivity_matrix=self.connectivity_matrix,
             time_idx=current_step,
             time_step=self.simulation_specs.step_size,
         )
 
+        self.reduce(simulation_state, effects)
+        self.update_from_state(simulation_state)
+
         return simulation_state
 
+
+    # ──────────────────────────────────────────────────────
+    # 1.1 Subsection: Helper Functions
+    # ──────────────────────────────────────────────────────
     def step_node(
         self, node: Node, previous_state: SimulationState, rng: np.random.Generator
-    ) -> Node:
-        for idx, module in enumerate(node.modules):
-            module = self.step_module(module, previous_state, rng)
-            node.modules[idx] = module
+    ) -> list:
+        node_effects = []
+        for module in node.modules:
+            effects = self.step_module(module, previous_state, rng)
+            node_effects.extend(effects)
 
-        return node
+        return node_effects
 
     def step_module(
         self,
         module: NodeModule,
         previous_state: SimulationState,
         rng: np.random.Generator,
-    ) -> NodeModule:
-        module.apply(previous_state, rng)
+    ) -> list:
+        effects = module.apply(previous_state, rng)
 
-        return module
+        return effects
 
+
+    # ──────────────────────────────────────────────────────
+    # 1.1 Subsection: Helper Functions
+    # ──────────────────────────────────────────────────────
     def build_state(self) -> SimulationState:
         return SimulationState(
             nodes=self.nodes,
@@ -93,3 +105,15 @@ class SimulationEngine:
             time_idx=-1,
             time_step=self.simulation_specs.step_size,
         )
+
+
+    # ──────────────────────────────────────────────────────
+    # 1.1 Subsection: Helper Functions
+    # ──────────────────────────────────────────────────────
+    def reduce(self, state: SimulationState, effects: list) -> None:
+        for effect in sorted(effects, key=lambda effect: effect.priority):
+            effect.apply(state)
+
+    def update_from_state(self, state: SimulationState) -> None:
+        self.nodes = state.nodes
+        self.connectivity_matrix = state.connectivity_matrix

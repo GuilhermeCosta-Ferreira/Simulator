@@ -24,5 +24,5 @@ class MoneyModule(NodeModule):
     balance: float
     income: float
 
-    def apply(self, previous_state: SimulationState, rng: np.random.Generator):
-        pass
+    def apply(self, previous_state: SimulationState, rng: np.random.Generator) -> list:
+        return []
