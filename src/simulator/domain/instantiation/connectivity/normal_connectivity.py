@@ -25,6 +25,10 @@ class NormalConnectivity(ConnectivityRule):
     def std(self) -> float:
         return self.data["std"]
 
-    # TODO: Make sure it works with already half-connected nodes
-    def build(self, node_id: int, connection_dict: dict[str, list]) -> NDArray:
+    def build(
+        self,
+        node_id: int,
+        connection_dict: dict[str, list],
+        rng: np.random.Generator,
+    ) -> NDArray:
         raise NotImplementedError

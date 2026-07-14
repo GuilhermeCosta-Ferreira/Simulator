@@ -1,6 +1,8 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+import numpy as np
+
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar
 from dataclasses import dataclass
@@ -15,5 +17,5 @@ class PropertyDistribution(ABC):
     data: dict[str, Any]
 
     @abstractmethod
-    def sample(self) -> float:
+    def sample(self, rng: np.random.Generator) -> float:
         pass

@@ -1,4 +1,3 @@
-
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
@@ -22,7 +21,12 @@ class PercentageConnectivity(ConnectivityRule):
     def percentage(self) -> float:
         return self.data["percentage"]
 
-    def build(self, node_id: int, connection_dict: dict[str, list]) -> NDArray:
+    def build(
+        self,
+        node_id: int,
+        connection_dict: dict[str, list],
+        rng: np.random.Generator,
+    ) -> NDArray:
         # 1. Extract the data from the connection_dict
         candidates = np.asarray(connection_dict["candidates"])
         current_connections = np.asarray(connection_dict["already_connected"])
@@ -46,7 +50,7 @@ class PercentageConnectivity(ConnectivityRule):
         nr_extra_connections = min(nr_extra_connections, len(forward_candidates))
 
         # 7. Sample the extra forward connections at random
-        sampled_candidates = np.random.choice(
+        sampled_candidates = rng.choice(
             forward_candidates, nr_extra_connections, replace=False
         )
 

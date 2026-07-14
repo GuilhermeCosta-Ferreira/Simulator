@@ -1,6 +1,8 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+import numpy as np
+
 from typing import ClassVar
 from dataclasses import dataclass
 from .property_distribution import PropertyDistribution
@@ -17,5 +19,5 @@ class ConstantDistribution(PropertyDistribution):
     def value(self) -> float:
         return self.data["value"]
 
-    def sample(self) -> float:
+    def sample(self, rng: np.random.Generator) -> float:
         return self.value
