@@ -33,6 +33,7 @@ class HealthModule(NodeModule):
     def _compute_death_chance(self) -> float:
         pass
 
+
 def decay_curve(x: float, decay_factor: float, max_age: float) -> float:
     c = decay_factor
     return 100 * np.log(1 + c * (1 - x / max_age)) / np.log(1 + c)

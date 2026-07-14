@@ -125,7 +125,9 @@ def build_node(
     modules: list | None = None,
 ) -> Node:
     if modules is None:
-        modules = [HealthModule(health=50.0, age=30.0, decay_factor=100_000, max_age=100.0)]
+        modules = [
+            HealthModule(health=50.0, age=30.0, decay_factor=100_000, max_age=100.0)
+        ]
     return Node(id=node_id, node_type=node_type, modules=modules)
 
 
@@ -153,7 +155,13 @@ def build_engine(
     if nodes is None:
         nodes = [
             Node(
-                id=0, node_type="citizen", modules=[HealthModule(health=80.0, age=25.0, decay_factor=100_000, max_age=100.0)]
+                id=0,
+                node_type="citizen",
+                modules=[
+                    HealthModule(
+                        health=80.0, age=25.0, decay_factor=100_000, max_age=100.0
+                    )
+                ],
             ),
             Node(
                 id=1,
