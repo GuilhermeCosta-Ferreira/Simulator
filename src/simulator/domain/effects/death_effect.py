@@ -1,11 +1,15 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
-from typing import ClassVar
+from __future__ import annotations
+
+from typing import ClassVar, TYPE_CHECKING
 from dataclasses import dataclass
 
 from .effect import Effect
-from ..simulation_state import SimulationState
+
+if TYPE_CHECKING:
+    from ..simulation_state import SimulationState
 
 
 
