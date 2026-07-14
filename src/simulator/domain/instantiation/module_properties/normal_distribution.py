@@ -1,7 +1,7 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
-import random
+import numpy as np
 
 from typing import ClassVar
 from dataclasses import dataclass
@@ -23,5 +23,5 @@ class NormalDistribution(PropertyDistribution):
     def std(self) -> float:
         return self.data["std"]
 
-    def sample(self) -> float:
-        return random.normalvariate(self.mean, self.std)
+    def sample(self, rng: np.random.Generator) -> float:
+        return rng.normal(self.mean, self.std)

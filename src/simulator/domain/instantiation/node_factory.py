@@ -26,12 +26,14 @@ MODULE_REGISTRY: dict[str, type[NodeModule]] = {
 # ================================================================
 @dataclass
 class NodeFactory:
-    def build_nodes(self, node_blueprint: NodeBlueprint) -> list[Node]:
+    def build_nodes(
+        self, node_blueprint: NodeBlueprint, rng: np.random.Generator
+    ) -> list[Node]:
         nodes = []
         node_id = 0
         for node_type_name in node_blueprint.type_names:
             new_nodes, next_id = _build_specific_node_type(
-                node_blueprint, node_type_name, node_id
+                node_blueprint, node_type_name, node_id, rng
             )
 
             node_id = next_id
@@ -66,14 +68,17 @@ class NodeFactory:
 # 1.1 Subsection: Helper Functions
 # ──────────────────────────────────────────────────────
 def _build_specific_node_type(
-    node_blueprint: NodeBlueprint, type_name: str, start_id: int
+    node_blueprint: NodeBlueprint,
+    type_name: str,
+    start_id: int,
+    rng: np.random.Generator,
 ) -> tuple[list[Node], int]:
     node_prop = node_blueprint.get_node_type_properties(type_name)
     nodes = []
 
     for _ in range(node_prop.initial_numbers):
         module_list = node_prop.modules
-        modules = _build_modules(module_list)
+        modules = _build_modules(module_list, rng)
 
         nodes.append(Node(id=start_id, node_type=node_prop.name, modules=modules))
         start_id += 1
@@ -81,23 +86,27 @@ def _build_specific_node_type(
     return nodes, start_id
 
 
-def _build_modules(module_list: list[ModuleProperty]) -> list[NodeModule]:
+def _build_modules(
+    module_list: list[ModuleProperty], rng: np.random.Generator
+) -> list[NodeModule]:
     modules = []
     for module_type in module_list:
-        module = _build_variables(module_type)
+        module = _build_variables(module_type, rng)
 
         modules.append(module)
 
     return modules
 
 
-def _build_variables(module_type: ModuleProperty) -> NodeModule:
+def _build_variables(
+    module_type: ModuleProperty, rng: np.random.Generator
+) -> NodeModule:
     module_class = MODULE_REGISTRY[module_type.name]
     kwargs = {}
 
     for variable in module_type.variables:
         variable_prop = module_type.variables[variable]
-        kwargs[variable] = variable_prop.sample()
+        kwargs[variable] = variable_prop.sample(rng)
 
     return module_class(**kwargs)
 

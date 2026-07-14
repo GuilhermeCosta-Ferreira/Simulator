@@ -1,6 +1,8 @@
 # ================================================================
 # 0. Section: IMPORTS
 # ================================================================
+import numpy as np
+
 from typing import Any
 from dataclasses import dataclass
 
@@ -32,5 +34,5 @@ class VariableProperty:
 
         raise ValueError(f"Unknown distribution type: {dist_type}")
 
-    def sample(self) -> float:
-        return self.distribution.sample()
+    def sample(self, rng: np.random.Generator) -> float:
+        return self.distribution.sample(rng)

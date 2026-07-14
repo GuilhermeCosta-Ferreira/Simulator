@@ -45,7 +45,7 @@ class SimulationFactory:
         node_blueprint = blueprint.node_blueprint
         simulation_specs = blueprint.simulation_specs
 
-        nodes = self._node_factory.build_nodes(node_blueprint)
+        nodes = self._node_factory.build_nodes(node_blueprint, rng)
         connectivity_matrix = self._node_factory.build_connectivity_matrix(
             nodes, node_blueprint, rng
         )
