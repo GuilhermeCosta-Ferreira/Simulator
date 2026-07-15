@@ -236,7 +236,7 @@ package "Model Domain Layer" #FFF8E1 {
         MetricExtractor ..> Metric
 
 
-        class RunAggregator <<planned>> {
+        class RunAggregator <<implemented>> {
             - _extractor: MetricExtractor
 
             + aggregate(histories: list, metric: Metric): MetricSeries
