@@ -8,7 +8,7 @@ from typing import Any
 from dataclasses import dataclass
 
 from .source import Source
-from ..service.simulation_run import SimulationRun
+from ..domain.simulation_run import SimulationRun
 from ..domain import Node, ConnectivityMatrix, SimulationState, SimulationEngine
 from ..domain.instantiation import SimulationSpecs
 from ..domain.instantiation.step_type import StepType

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from .metrics import Metric
 from .metric_series import MetricSeries
 from .metric_extractor import MetricExtractor
-from ...service.simulation_run import SimulationRun
+from ..simulation_run import SimulationRun
 from ..instantiation.simulation_specs import SimulationSpecs
 
 

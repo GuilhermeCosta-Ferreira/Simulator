@@ -5,7 +5,7 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from simulator.domain.instantiation.simulation_blueprint import SimulationBlueprint
-from simulator.service.simulation_run import SimulationRun
+from simulator.domain.simulation_run import SimulationRun
 
 from .source import Source
 from .loader import Loader
