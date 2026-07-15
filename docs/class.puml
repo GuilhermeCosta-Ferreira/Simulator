@@ -230,7 +230,7 @@ package "Model Domain Layer" #FFF8E1 {
         }
 
 
-        class MetricExtractor <<planned>> {
+        class MetricExtractor <<implemented>> {
             + extract(history: list[SimulationState], metric: Metric): NDArray
         }
         MetricExtractor ..> Metric
