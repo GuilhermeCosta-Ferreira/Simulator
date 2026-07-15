@@ -58,7 +58,7 @@ package "Service Layer" #E8F5E9 {
     Simulation --> Visualizer
 
 
-    class Visualizer <<planned>> {
+    class Visualizer <<partial>> {
         + simulation_name: str
         + base_folder: Path
 
@@ -442,14 +442,14 @@ package "Adapter Layer" #E3F2FD {
     class Loader <<implemented>> {
         + source: Source
 
-        + load_run(run_nr: int, out_file_type: str): Simulation
+        + load_run(run_nr: int, out_file_type: str): SimulationRun
         + load_all_runs(out_file_type: str): list[SimulationRun]
     }
     Loader --> Source
-    Loader ..> Simulation
+    Loader ..> SimulationRun
 
 
-    class SimulationIO <<partial>> {
+    class SimulationIO <<implemented>> {
         + source: Source
 
         - _config_loader: ConfigLoader
