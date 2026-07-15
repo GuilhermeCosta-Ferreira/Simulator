@@ -43,15 +43,6 @@ class Graph <<external>>
 'Service Layer'
 '=============================================================================='
 package "Service Layer" #E8F5E9 {
-    class SimulationRun <<implemented>> {
-        + engine: SimulationEngine
-        + current_step: int
-        + history: list[SimulationState]
-
-        + run_simulation(rng: Generator):
-    }
-
-
     class Simulation <<partial>> {
         + simulation_name: str
         + simulation_description: str
@@ -170,6 +161,17 @@ package "Model Domain Layer" #FFF8E1 {
         + get_module(module_type: type[NodeModule]) -> NodeModule
     }
     Node o-- NodeModule
+
+
+    class SimulationRun <<implemented>> {
+        + engine: SimulationEngine
+        + current_step: int
+        + history: list[SimulationState]
+
+        + run_simulation(rng: Generator):
+    }
+    SimulationRun --> SimulationEngine
+    SimulationRun o-- SimulationState
 
 
     class SimulationEngine <<partial>> {
@@ -509,9 +511,6 @@ package "Adapter Layer" #E3F2FD {
 'Broken Links'
 '=============================================================================='
 SimulationEngine --> SimulationSpecs
-
-SimulationRun --> SimulationEngine
-SimulationRun o-- SimulationState
 
 Simulation --> SimulationIO
 Simulation --> Source
