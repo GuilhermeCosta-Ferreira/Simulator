@@ -29,6 +29,7 @@ def _series(name: str, unit: str = "u", scale: float = 1.0) -> MetricSeries:
     mean = timepoints * scale
     return MetricSeries(
         name=name,
+        title=name.title(),
         unit=unit,
         timepoints=timepoints,
         mean=mean,
@@ -98,6 +99,7 @@ def test_different_x_unit_keeps_labels_on_every_plot() -> None:
     top = _series("top")
     bottom = MetricSeries(
         name="bottom",
+        title="Bottom",
         unit="u",
         timepoints=np.arange(5, dtype=float),
         mean=np.arange(5, dtype=float),
@@ -117,6 +119,7 @@ def test_same_x_unit_different_range_gets_unified_xlim() -> None:
     short = _series("top")
     longer = MetricSeries(
         name="bottom",
+        title="Bottom",
         unit="u",
         timepoints=np.arange(9, dtype=float),
         mean=np.arange(9, dtype=float),
