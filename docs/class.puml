@@ -212,50 +212,6 @@ package "Model Domain Layer" #FFF8E1 {
         }
 
 
-        abstract class Metric <<partial>> {
-            + name: ClassVar[str]
-            + unit: str
-            + plot_kind: ClassVar[str]
-
-            + calculate(state: SimulationState): float
-            + x_axis(specs: SimulationSpecs): Axis
-        }
-
-
-        abstract class ModuleScalarMetric <<planned>> {
-            + module: ClassVar[type[NodeModule]]
-            + attribute: ClassVar[str]
-
-            + calculate(state: SimulationState): float
-
-            # _include(node: Node): bool
-            # _aggregate(values: list[float]): float
-        }
-        ModuleScalarMetric ..|> Metric
-
-
-        class GDPMetric <<planned>> {
-            + calculate(state: SimulationState): float
-        }
-        GDPMetric ..|> Metric
-
-
-        class AgeMetric <<partial>> {
-            + name: ClassVar[str]
-            + module: ClassVar[type[NodeModule]]
-            + attribute: ClassVar[str]
-        }
-        AgeMetric ..|> ModuleScalarMetric
-
-
-        class HealthMetric <<partial>> {
-            + name: ClassVar[str]
-            + module: ClassVar[type[NodeModule]]
-            + attribute: ClassVar[str]
-        }
-        HealthMetric ..|> ModuleScalarMetric
-
-
         class MetricSeries <<partial>> {
             + name: str
             + x: Axis
@@ -310,6 +266,48 @@ package "Model Domain Layer" #FFF8E1 {
             + values(state: SimulationState): dict[int, float]
         }
         NodeColorMapper --> NodeColorSpec
+
+        package "Metrics"{
+            abstract class Metric <<partial>> {
+                + name: ClassVar[str]
+                + unit: str
+                + plot_kind: ClassVar[str]
+
+                + calculate(state: SimulationState): float
+                + x_axis(specs: SimulationSpecs): Axis
+            }
+
+
+            abstract class ModuleScalarMetric <<implemented>> {
+                + module: ClassVar[type[NodeModule]]
+                + attribute: ClassVar[str]
+
+                + calculate(state: SimulationState): float
+            }
+            ModuleScalarMetric ..|> Metric
+
+
+            class GDPMetric <<planned>> {
+                + calculate(state: SimulationState): float
+            }
+            GDPMetric ..|> Metric
+
+
+            class AgeMetric <<partial>> {
+                + name: ClassVar[str]
+                + module: ClassVar[type[NodeModule]]
+                + attribute: ClassVar[str]
+            }
+            AgeMetric ..|> ModuleScalarMetric
+
+
+            class HealthMetric <<partial>> {
+                + name: ClassVar[str]
+                + module: ClassVar[type[NodeModule]]
+                + attribute: ClassVar[str]
+            }
+            HealthMetric ..|> ModuleScalarMetric
+            }
     }
 
 
@@ -628,7 +626,6 @@ Visualizer ..> NetworkRenderer
 
 Metric ..> SimulationState
 Metric ..> SimulationSpecs
-ModuleScalarMetric ..> Node
 ModuleScalarMetric ..> NodeModule
 MetricExtractor ..> SimulationState
 NodeColorMapper ..> SimulationState
