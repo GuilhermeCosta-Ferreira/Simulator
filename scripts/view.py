@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     view.render_summary_grid(
         metrics = [
-            HealthMetric("months"),
+            HealthMetric(),
             AgeMetric("months"),
         ],
         formats = ["png"],
