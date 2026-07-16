@@ -474,7 +474,7 @@ package "Adapter Layer" #E3F2FD {
 
 
     package "Rendering"{
-        class MetricPlot <<planned>> {
+        class MetricPlot <<implemented>> {
             + series: MetricSeries
 
             + render(): Figure
