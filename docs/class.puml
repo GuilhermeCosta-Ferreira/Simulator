@@ -503,7 +503,7 @@ package "Adapter Layer" #E3F2FD {
         NetworkRenderer --> NetworkGraphBuilder
 
 
-        class FigureExporter <<partial>> {
+        class FigureExporter <<implemented>> {
             + source: Source
 
             + export(figure: Figure, name: str, formats: list[str]): list[Path]
