@@ -27,7 +27,7 @@ if __name__ == '__main__':
         simulation_description="the simulation to test",
     )
 
-    view.render_metrics(
+    view.render_summary_grid(
         metrics = [
             HealthMetric("months"),
             AgeMetric("months"),
