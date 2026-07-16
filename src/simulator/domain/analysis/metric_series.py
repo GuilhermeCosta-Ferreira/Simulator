@@ -15,3 +15,4 @@ class MetricSeries:
     timepoints: NDArray
     mean: NDArray
     std: NDArray
+    time_unit: str

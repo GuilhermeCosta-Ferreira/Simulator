@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from ..adapters import Source, SimulationIO
 from ..domain.analysis import RunAggregator
 from ..domain.analysis.metrics import Metric
+from ..adapters.render import MetricPlot, FigureExporter
 
 
 # ================================================================
@@ -32,11 +33,21 @@ class Visualizer:
     def _io(self) -> SimulationIO:
         return SimulationIO(self._source)
 
+    @property
+    def _figure_exporter(self):
+        return FigureExporter(self._source)
+
     # ================================================================
     # 2. Section: Methods
     # ================================================================
     def render_metrics(self, metrics: list[Metric], formats: list[str]) -> list[Path]:
         runs = self._io.load_all_runs()
 
+        paths = []
         for metric in metrics:
             series = self._aggregator.aggregate(runs_histories=runs, metric=metric)
+            figure = MetricPlot(series).render()
+            path_list = self._figure_exporter.export(figure, series.name, formats)
+            paths.extend(path_list)
+
+        return paths

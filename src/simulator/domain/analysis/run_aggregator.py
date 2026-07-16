@@ -40,6 +40,7 @@ class RunAggregator:
             timepoints=timepoints,
             mean=mean,
             std=std,
+            time_unit=simulation_specs.step_size.unit,
         )
         return metric_series
 
