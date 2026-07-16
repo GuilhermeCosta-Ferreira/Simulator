@@ -23,11 +23,14 @@ from simulator.domain.analysis.metrics import AgeMetric, HealthMetric
 # ================================================================
 if __name__ == '__main__':
     view = Visualizer(
-        simulation_name="test_simulation",
+        simulation_name="test_simulation_3",
         simulation_description="the simulation to test",
     )
 
     view.render_metrics(
-        metrics = [HealthMetric("months")],
+        metrics = [
+            HealthMetric("months"),
+            AgeMetric("months"),
+        ],
         formats = ["png"],
     )
