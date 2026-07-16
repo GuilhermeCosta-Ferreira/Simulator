@@ -222,20 +222,16 @@ package "Model Domain Layer" #FFF8E1 {
         }
 
 
-        abstract class NodeAggregateMetric <<planned>> {
+        abstract class ModuleScalarMetric <<planned>> {
+            + module: ClassVar[type[NodeModule]]
+            + attribute: ClassVar[str]
+
             + calculate(state: SimulationState): float
 
             # _include(node: Node): bool
             # _aggregate(values: list[float]): float
         }
-        NodeAggregateMetric ..|> Metric
-
-
-        abstract class ModuleScalarMetric <<planned>> {
-            + module: ClassVar[type[NodeModule]]
-            + attribute: ClassVar[str]
-        }
-        ModuleScalarMetric ..|> NodeAggregateMetric
+        ModuleScalarMetric ..|> Metric
 
 
         class GDPMetric <<planned>> {
@@ -632,7 +628,7 @@ Visualizer ..> NetworkRenderer
 
 Metric ..> SimulationState
 Metric ..> SimulationSpecs
-NodeAggregateMetric ..> Node
+ModuleScalarMetric ..> Node
 ModuleScalarMetric ..> NodeModule
 MetricExtractor ..> SimulationState
 NodeColorMapper ..> SimulationState
