@@ -49,4 +49,4 @@ def _compute_timepoints(simulation_specs: SimulationSpecs) -> NDArray:
     max_duration = simulation_specs.max_duration
     step_type = simulation_specs.step_size
 
-    return np.arange(max_duration) * step_type.factor
+    return np.arange(max_duration + 1) * step_type.factor

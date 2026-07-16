@@ -50,6 +50,12 @@ class SimulationIO:
 
         return run_folder, run_id
 
+    def init_figures(self) -> Path:
+        figures_folder = self._repository.init_figures()
+
+        return figures_folder
+
+
     def load_config(self) -> SimulationBlueprint:
         blueprint = self._config_loader.load_config()
         return blueprint

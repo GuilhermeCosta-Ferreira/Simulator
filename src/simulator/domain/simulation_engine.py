@@ -112,5 +112,5 @@ class SimulationEngine:
             effect.apply(state)
 
     def update_from_state(self, state: SimulationState) -> None:
-        self.nodes = state.nodes
-        self.connectivity_matrix = state.connectivity_matrix
+        self.nodes = state.nodes.copy()
+        self.connectivity_matrix = state.connectivity_matrix.copy()

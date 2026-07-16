@@ -37,6 +37,9 @@ class Visualizer:
     def _figure_exporter(self):
         return FigureExporter(self._source)
 
+    def __post_init__(self):
+        self._io.init_figures()
+
     # ================================================================
     # 2. Section: Methods
     # ================================================================
