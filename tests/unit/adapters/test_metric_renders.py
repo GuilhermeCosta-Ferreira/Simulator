@@ -1,8 +1,8 @@
 """Unit tests for renderer selection.
 
-MetricPlot delegates the marks to a MetricRenderer chosen from the series'
-`plot_kind` via the registry, unless one is passed explicitly. Matplotlib runs
-headless (Agg).
+MetricPlot delegates the marks to a MetricRenderer resolved from the series'
+`plot_kind` via the registry on every access — it cannot be overridden.
+Matplotlib runs headless (Agg).
 """
 
 # ================================================================
@@ -20,6 +20,7 @@ from matplotlib.axes import Axes
 
 from simulator.domain.analysis import Axis, MetricSeries
 from simulator.adapters.render import MetricPlot
+from simulator.adapters.render import metric_plot as metric_plot_module
 from simulator.adapters.render.metric_renders import (
     LinePlot,
     MetricRenderer,
@@ -44,15 +45,15 @@ def _series(plot_kind: str = "line") -> MetricSeries:
 
 @dataclass
 class _SpyRenderer(MetricRenderer):
-    """Records the series it was asked to draw."""
+    """Records the (axes, series) pairs it was asked to draw."""
 
-    drawn: list[MetricSeries] = None
+    drawn: list = None
 
     def __post_init__(self) -> None:
         self.drawn = []
 
     def draw(self, axes: Axes, series: MetricSeries) -> None:
-        self.drawn.append(series)
+        self.drawn.append((axes, series))
 
 
 # ================================================================
@@ -78,23 +79,18 @@ def test_renderer_defaults_to_the_one_for_the_series_plot_kind() -> None:
 
 
 @pytest.mark.unit
-def test_explicit_renderer_overrides_the_plot_kind() -> None:
+def test_draw_delegates_the_series_to_the_resolved_renderer(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # patches the registry lookup itself, since renderer can't be injected.
     spy = _SpyRenderer()
-
-    plot = MetricPlot(_series(), renderer=spy)
-
-    assert plot.renderer is spy
-
-
-@pytest.mark.unit
-def test_draw_delegates_the_series_to_the_renderer() -> None:
+    monkeypatch.setattr(metric_plot_module, "renderer_for", lambda plot_kind: spy)
     _, axes = plt.subplots()
-    spy = _SpyRenderer()
     series = _series()
 
-    MetricPlot(series, renderer=spy).draw(axes)
+    MetricPlot(series).draw(axes)
 
-    assert spy.drawn == [series]
+    assert spy.drawn == [(axes, series)]
     plt.close("all")
 
 
