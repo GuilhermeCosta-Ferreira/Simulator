@@ -183,7 +183,9 @@ package "Model Domain Layer" #FFF8E1 {
     }
     SimulationEngine o-- Node
     SimulationEngine --> ConnectivityMatrix
+    !if ($SHOW_DEPENDENCIES == 1)
     SimulationEngine ..> SimulationState
+    !endif
 
 
     class ConnectivityMatrix <<partial>> {
@@ -203,39 +205,40 @@ package "Model Domain Layer" #FFF8E1 {
 
 
     package "Analysis"{
-        abstract class Metric <<implemented>> {
-            + name: ClassVar[str]
+        class Axis <<planned>> {
+            + values: NDArray
+            + label: str
             + unit: str
-
-            + calculate(state: SimulationState): float
         }
 
 
-        class GDPMetric <<planned>> {
-            + calculate(state: SimulationState): float
-        }
-        GDPMetric ..|> Metric
-
-
-        class AgeMetric <<implemented>> {
-            + calculate(state: SimulationState): float
-        }
-        AgeMetric ..|> Metric
-
-
-        class MetricSeries <<implemented>> {
+        class MetricSeries <<partial>> {
             + name: str
-            + unit: str
-            + timepoints: NDArray
-            + mean: NDArray
+            + title: str
+            + x: Axis
+            + y: Axis
             + std: NDArray
+            + plot_kind: str
         }
+        MetricSeries o-- Axis
+
+
+        class MetricField <<planned>> {
+            + name: str
+            + x: Axis
+            + y: Axis
+            + values: NDArray
+            + plot_kind: str
+        }
+        MetricField o-- Axis
 
 
         class MetricExtractor <<implemented>> {
             + extract(history: list[SimulationState], metric: Metric): NDArray
         }
+        !if ($SHOW_DEPENDENCIES == 1)
         MetricExtractor ..> Metric
+        !endif
 
 
         class RunAggregator <<implemented>> {
@@ -244,7 +247,10 @@ package "Model Domain Layer" #FFF8E1 {
             + aggregate(histories: list, metric: Metric): MetricSeries
         }
         RunAggregator --> MetricExtractor
+        !if ($SHOW_DEPENDENCIES == 1)
         RunAggregator ..> MetricSeries
+        RunAggregator ..> Axis
+        !endif
 
 
         class NodeColorSpec <<planned>> {
@@ -261,6 +267,49 @@ package "Model Domain Layer" #FFF8E1 {
             + values(state: SimulationState): dict[int, float]
         }
         NodeColorMapper --> NodeColorSpec
+
+        package "Metrics"{
+            abstract class Metric <<partial>> {
+                + name: ClassVar[str]
+                + unit: str
+                + plot_kind: ClassVar[str]
+                + title: ClassVar[str]
+
+                + calculate(state: SimulationState): float
+                + x_axis(specs: SimulationSpecs): Axis
+            }
+
+
+            abstract class ModuleScalarMetric <<implemented>> {
+                + module: ClassVar[type[NodeModule]]
+                + attribute: ClassVar[str]
+
+                + calculate(state: SimulationState): float
+            }
+            ModuleScalarMetric ..|> Metric
+
+
+            class AliveMetric <<implemented>> {
+                + calculate(state: SimulationState): float
+            }
+            AliveMetric ..|> Metric
+
+
+            class AgeMetric <<implemented>> {
+                + name: ClassVar[str]
+                + module: ClassVar[type[NodeModule]]
+                + attribute: ClassVar[str]
+            }
+            AgeMetric ..|> ModuleScalarMetric
+
+
+            class HealthMetric <<implemented>> {
+                + name: ClassVar[str]
+                + module: ClassVar[type[NodeModule]]
+                + attribute: ClassVar[str]
+            }
+            HealthMetric ..|> ModuleScalarMetric
+            }
     }
 
 
@@ -283,7 +332,9 @@ package "Model Domain Layer" #FFF8E1 {
 
             + get_node_type_properties(name: str): NodeProperty
         }
+        !if ($SHOW_DEPENDENCIES == 1)
         NodeBlueprint ..> NodeProperty
+        !endif
 
 
         class SimulationSpecs <<implemented>> {
@@ -378,17 +429,21 @@ package "Model Domain Layer" #FFF8E1 {
             + build_simulation(blueprint: SimulationBlueprint, rng: Generator): Simulation
         }
         SimulationFactory --> NodeFactory
+        !if ($SHOW_DEPENDENCIES == 1)
         SimulationFactory ..> SimulationBlueprint
         SimulationFactory ..> SimulationEngine
         SimulationFactory ..> Simulation
+        !endif
 
         class NodeFactory <<implemented>> {
             + build_nodes(node_blueprint: NodeBlueprint, rng: Generator): list[Node]
             + build_connectivity_matrix(node_blueprint: NodeBlueprint, rng: Generator): ConnectivityMatrix
         }
+        !if ($SHOW_DEPENDENCIES == 1)
         NodeFactory ..> NodeBlueprint
         NodeFactory ..> Node
         NodeFactory ..> ConnectivityMatrix
+        !endif
     }
 
 }
@@ -429,7 +484,9 @@ package "Adapter Layer" #E3F2FD {
 
         + load_config(): SimulationBlueprint
     }
+    !if ($SHOW_DEPENDENCIES == 1)
     ConfigLoader ..> SimulationBlueprint
+    !endif
 
 
     class Downloader <<implemented>> {
@@ -447,7 +504,9 @@ package "Adapter Layer" #E3F2FD {
         + load_all_runs(out_file_type: str): list[SimulationRun]
     }
     Loader --> Source
+    !if ($SHOW_DEPENDENCIES == 1)
     Loader ..> SimulationRun
+    !endif
 
 
     class SimulationIO <<implemented>> {
@@ -469,17 +528,44 @@ package "Adapter Layer" #E3F2FD {
     SimulationIO --> Downloader
     SimulationIO --> Repository
     SimulationIO --> Loader
+    !if ($SHOW_DEPENDENCIES == 1)
     SimulationIO ..> Simulation
     SimulationIO ..> SimulationBlueprint
+    !endif
 
 
     package "Rendering"{
-        class MetricPlot <<implemented>> {
+        abstract class MetricRenderer <<planned>> {
+            + draw(axes: Axes, series: MetricSeries): None
+        }
+
+
+        class LinePlot <<planned>> {
+            + draw(axes: Axes, series: MetricSeries): None
+        }
+        LinePlot ..|> MetricRenderer
+
+
+        class BarPlot <<planned>> {
+            + draw(axes: Axes, series: MetricSeries): None
+        }
+        BarPlot ..|> MetricRenderer
+
+
+        class Heatmap <<planned>> {
+            + draw(axes: Axes, field: MetricField): None
+        }
+        Heatmap ..|> MetricRenderer
+
+
+        class MetricPlot <<partial>> {
             + series: MetricSeries
+            + renderer: MetricRenderer
 
             + render(): Figure
             + draw(axes: Axes, show_xlabel: bool, show_ylabel: bool): None
         }
+        MetricPlot --> MetricRenderer
 
 
         class SummaryGrid <<implemented>> {
@@ -489,7 +575,9 @@ package "Adapter Layer" #E3F2FD {
 
             + render(): Figure
         }
+        !if ($SHOW_DEPENDENCIES == 1)
         SummaryGrid ..> MetricPlot
+        !endif
 
 
         class NetworkGraphBuilder <<planned>> {
@@ -530,6 +618,7 @@ Visualizer --> Source
 Visualizer --> Loader
 Visualizer --> RunAggregator
 Visualizer --> FigureExporter
+!if ($SHOW_DEPENDENCIES == 1)
 Visualizer ..> Metric
 Visualizer ..> MetricPlot
 Visualizer ..> SummaryGrid
@@ -538,27 +627,32 @@ Visualizer ..> NodeColorMapper
 Visualizer ..> NetworkRenderer
 
 Metric ..> SimulationState
+Metric ..> SimulationSpecs
+ModuleScalarMetric ..> NodeModule
 MetricExtractor ..> SimulationState
 NodeColorMapper ..> SimulationState
+!endif
 
 MetricPlot --> MetricSeries
 SummaryGrid --> MetricSeries
+!if ($SHOW_DEPENDENCIES == 1)
+MetricRenderer ..> MetricSeries
+Heatmap ..> MetricField
 NetworkGraphBuilder ..> SimulationState
 NetworkGraphBuilder ..> Graph
 NetworkGraphBuilder ..> NetworkX
 NetworkRenderer ..> NodeColorSpec
 NetworkRenderer ..> NodeColorMapper
 NetworkRenderer ..> Plotly
+!endif
 FigureExporter --> Source
+!if ($SHOW_DEPENDENCIES == 1)
 Graph ..> NetworkX
 
 SimulationEngine ..> Effect
 Effect ..> SimulationState
 NodeModule ..> Effect
+!endif
 
 
 @enduml
-
-
-
-'!if ($SHOW_DEPENDENCIES == 1)'
