@@ -289,7 +289,7 @@ package "Model Domain Layer" #FFF8E1 {
             ModuleScalarMetric ..|> Metric
 
 
-            class GDPMetric <<planned>> {
+            class AliveMetric <<implemented>> {
                 + calculate(state: SimulationState): float
             }
             GDPMetric ..|> Metric
