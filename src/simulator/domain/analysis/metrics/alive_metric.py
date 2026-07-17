@@ -8,7 +8,6 @@ from .metric import Metric
 from ...simulation_state import SimulationState
 
 
-
 # ================================================================
 # 1. Section: Functions
 # ================================================================
