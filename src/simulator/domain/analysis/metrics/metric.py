@@ -29,10 +29,9 @@ class Metric(ABC):
     def x_axis(self, specs: SimulationSpecs) -> Axis:
 
         return Axis(
-            values = _compute_timepoints(specs),
-            label = "Time",
-            unit = specs.step_size.unit
+            values=_compute_timepoints(specs), label="Time", unit=specs.step_size.unit
         )
+
 
 def _compute_timepoints(simulation_specs: SimulationSpecs) -> NDArray:
     max_duration = simulation_specs.max_duration
