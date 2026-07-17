@@ -4,6 +4,8 @@
 from numpy.typing import NDArray
 from dataclasses import dataclass
 
+from .axis import Axis
+
 
 # ================================================================
 # 1. Section: Functions
@@ -12,8 +14,7 @@ from dataclasses import dataclass
 class MetricSeries:
     name: str
     title: str
-    unit: str
-    timepoints: NDArray
-    mean: NDArray
+    x: Axis
+    y: Axis
     std: NDArray
-    time_unit: str
+    plot_kind: str
