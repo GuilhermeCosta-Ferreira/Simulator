@@ -214,7 +214,7 @@ package "Model Domain Layer" #FFF8E1 {
         }
 
 
-        class MetricSeries <<implemented>> {
+        class MetricSeries <<partial>> {
             + name: str
             + title: str
             + x: Axis
@@ -225,7 +225,7 @@ package "Model Domain Layer" #FFF8E1 {
         MetricSeries o-- Axis
 
 
-        class MetricField <<implemented>> {
+        class MetricField <<partial>> {
             + name: str
             + title: str
             + x: Axis
