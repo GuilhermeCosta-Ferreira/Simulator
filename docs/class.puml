@@ -88,7 +88,9 @@ package "Model Domain Layer" #FFF8E1 {
         class HealthModule <<implemented>> {
             + health: float
             + age: float
-            + decay_factor: float
+            + baseline_hazard: float
+            + rate_of_aging: float
+            + ind_background_hazard: float
             + max_age: float
         }
         HealthModule ..|> NodeModule
