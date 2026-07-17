@@ -538,37 +538,13 @@ package "Adapter Layer" #E3F2FD {
 
 
     package "Rendering"{
-        abstract class MetricRenderer <<planned>> {
-            + draw(axes: Axes, series: MetricSeries): None
-        }
-
-
-        class LinePlot <<planned>> {
-            + draw(axes: Axes, series: MetricSeries): None
-        }
-        LinePlot ..|> MetricRenderer
-
-
-        class BarPlot <<planned>> {
-            + draw(axes: Axes, series: MetricSeries): None
-        }
-        BarPlot ..|> MetricRenderer
-
-
-        class Heatmap <<planned>> {
-            + draw(axes: Axes, field: MetricField): None
-        }
-        Heatmap ..|> MetricRenderer
-
-
-        class MetricPlot <<partial>> {
+        class MetricPlot <<implemented>> {
             + series: MetricSeries
             + renderer: MetricRenderer
 
             + render(): Figure
             + draw(axes: Axes, show_xlabel: bool, show_ylabel: bool): None
         }
-        MetricPlot --> MetricRenderer
 
 
         class SummaryGrid <<implemented>> {
@@ -581,6 +557,31 @@ package "Adapter Layer" #E3F2FD {
         !if ($SHOW_DEPENDENCIES == 1)
         SummaryGrid ..> MetricPlot
         !endif
+
+
+        package "Metric Renders"{
+            abstract class MetricRenderer <<implemented>> {
+                + draw(axes: Axes, series: MetricSeries): None
+            }
+
+
+            class LinePlot <<implemented>> {
+                + draw(axes: Axes, series: MetricSeries): None
+            }
+            LinePlot ..|> MetricRenderer
+
+
+            class BarPlot <<planned>> {
+                + draw(axes: Axes, series: MetricSeries): None
+            }
+            BarPlot ..|> MetricRenderer
+
+
+            class Heatmap <<planned>> {
+                + draw(axes: Axes, field: MetricField): None
+            }
+            Heatmap ..|> MetricRenderer
+        }
 
 
         class NetworkGraphBuilder <<planned>> {
@@ -656,6 +657,8 @@ SimulationEngine ..> Effect
 Effect ..> SimulationState
 NodeModule ..> Effect
 !endif
+
+MetricPlot --> MetricRenderer
 
 
 @enduml
