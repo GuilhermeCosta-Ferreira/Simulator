@@ -12,14 +12,7 @@ from ....domain.analysis import MetricField
 # 1. Section: Functions
 # ================================================================
 @dataclass
-class HeatmapPlot(MetricRenderer):
-    """Draw a (steps, bins) field as an image, time along x.
-
-    Attributes:
-        cmap: Matplotlib colormap name.
-        colorbar: Whether to attach a colorbar to the axes.
-    """
-
+class HeatmapPlot(MetricRenderer[MetricField]):
     cmap: str = "viridis"
     colorbar: bool = True
 
@@ -37,9 +30,9 @@ class HeatmapPlot(MetricRenderer):
             axes.figure.colorbar(image, ax=axes)
 
 
-# ================================================================
-# 2. Section: Functions — geometry
-# ================================================================
+# ──────────────────────────────────────────────────────
+# 1.1 Subsection: Helper Functions
+# ──────────────────────────────────────────────────────
 def _extent(x_values, y_values) -> tuple[float, float, float, float]:
     """Outer edges of the image, from coordinates that are bin centres."""
     half = _half_step(y_values)
@@ -49,7 +42,6 @@ def _extent(x_values, y_values) -> tuple[float, float, float, float]:
         float(y_values[0]) - half,
         float(y_values[-1]) + half,
     )
-
 
 def _half_step(values) -> float:
     if len(values) < 2:

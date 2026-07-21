@@ -12,7 +12,7 @@ from ....domain.analysis import MetricSeries
 # 1. Section: Functions
 # ================================================================
 @dataclass
-class LinePlot(MetricRenderer):
+class LinePlot(MetricRenderer[MetricSeries]):
     def draw(self, axes: Axes, series: MetricSeries) -> None:
         x, y = series.x, series.y
         axes.plot(x.values, y.values)
