@@ -29,4 +29,4 @@ The Simulator is a tool to help tackle complex systems problems. With the easy o
 ## License
 Licensed under the [GNU Affero General Public License v3.0 or later](LICENSE) (AGPL-3.0-or-later). Copyright (C) 2026 GuilhermeCF.
 
-If you run a modified version of this software as a network service, the AGPL requires you to make the corresponding source available to users of that service — see [LICENSE](LICENSE) §13 for the exact terms.
+If you run a modified version of this software as a network service, the AGPL requires you to make the corresponding source available to users of that service: see [LICENSE](LICENSE) §13 for the exact terms.
