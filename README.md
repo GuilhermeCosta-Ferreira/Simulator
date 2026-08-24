@@ -5,6 +5,10 @@
 </h1>
 
 <p align="center">
+    <a href="https://www.agorasimlab.com">Official Website</a>
+</p>
+
+<p align="center">
     Contrubitors:
   <a href="https://github.com/GuilhermeCosta-Ferreira">Guilherme Costa Ferreira</a>
 </p>
@@ -19,6 +23,7 @@
     <img src="https://shields.io/badge/coverage-97%25-brightgreen?style=flat" alt="Coverage">
     <!-- coverage-badge:end -->
     <a href="LICENSE"><img src="https://shields.io/badge/license-AGPL--3.0-blue?style=flat" alt="License"></a>
+    <a href="https://www.agorasimlab.com"><img src="https://shields.io/badge/website-agorasimlab.com-blue?style=flat&logo=googlechrome&logoColor=white" alt="Website"></a>
 </div>
 
 ---
