@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# Copyright (C) 2026 GuilhermeCF
+
+# ================================================================
+# 0. Section: IMPORTS
+# ================================================================
+from __future__ import annotations
+
+import numpy as np
+
+from typing import ClassVar, TYPE_CHECKING
+from dataclasses import dataclass
+
+from .node_module import NodeModule
+
+if TYPE_CHECKING:
+    from ..simulation_state import SimulationState
+
+
+# ================================================================
+# 1. Section: Functions
+# ================================================================
+@dataclass
+class LocationModule(NodeModule):
+    name: ClassVar[str] = "location"
+
+    x: float
+    y: float
+
+    def apply(self, previous_state: SimulationState, rng: np.random.Generator) -> list:
+        return []
