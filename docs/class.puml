@@ -99,6 +99,14 @@ package "Model Domain Layer" #FFF8E1 {
         }
         MoneyModule ..|> NodeModule
 
+
+        class LocationModule <<implemented>> {
+            + x: float
+            + y: float
+        }
+        LocationModule ..|> NodeModule
+
+
         class ResourcesModule <<partial>> {
             + resources: list[Resource]
         }
